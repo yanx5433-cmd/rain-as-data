@@ -2,6 +2,10 @@
 
 > 把一天的降雨数据变成一场真实的雨 —— Three.js + WebGL + 自定义 GLSL Shader 实时粒子雨景。
 
+**▶ 在线体验：[yanx5433-cmd.github.io/rain-as-data](https://yanx5433-cmd.github.io/rain-as-data/)**（建议屏幕调亮）
+
+![demo](docs/demo.gif)
+
 ![screenshot](docs/screenshot.png)
 
 一次对「数据可视化 × 粒子特效」的实验：26 个降雨观测点被摆放成一条时间轴上的雨柱，

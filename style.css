@@ -21,24 +21,7 @@ html, body {
 
 #stage { position: fixed; inset: 0; display: block; }
 
-/* 电影感暗角与颗粒 */
-#vignette {
-  position: fixed; inset: 0; pointer-events: none; z-index: 5;
-  background: radial-gradient(120% 90% at 50% 42%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
-}
-#grain {
-  position: fixed; inset: -50%; width: 200%; height: 200%;
-  pointer-events: none; z-index: 6; opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
-  animation: grain 0.9s steps(4) infinite;
-}
-@keyframes grain {
-  0% { transform: translate(0, 0); }
-  25% { transform: translate(-2%, 1.4%); }
-  50% { transform: translate(1.6%, -1.2%); }
-  75% { transform: translate(-1%, -2%); }
-  100% { transform: translate(0, 0); }
-}
+/* 暗角 / 颗粒 / 色差已移入 WebGL 后期链（见 main.js 的 Grade pass） */
 
 /* 左上角场景标题 */
 #scene-title {
@@ -60,7 +43,15 @@ html, body {
 #hud .time { font-size: 12px; letter-spacing: 0.28em; color: #c3ccd6; font-variant-numeric: tabular-nums; }
 #hud .value-row { display: flex; align-items: baseline; gap: 8px; margin-top: 2px; }
 #hud .value { font-size: 38px; font-weight: 650; letter-spacing: 0.02em; line-height: 1;
-  font-variant-numeric: tabular-nums; color: #f4f7fb; }
+  font-variant-numeric: tabular-nums; color: #f4f7fb;
+  display: inline-block; transform-origin: 100% 60%; will-change: transform;
+  /* 数字自带一点暖色辉光：呼应播放头，也是画面里极小面积的橙色 */
+  text-shadow: 0 0 14px rgba(255, 176, 112, 0.42), 0 0 40px rgba(150, 195, 255, 0.30); }
+#hud .value.pulse { animation: hudpop 120ms ease-out; }
+@keyframes hudpop {
+  0%   { transform: scale(1.055); filter: brightness(1.55); }
+  100% { transform: scale(1);     filter: brightness(1); }
+}
 #hud .unit { font-size: 11px; letter-spacing: 0.14em; color: var(--ink-low); }
 
 /* 左侧数据面板 */
@@ -75,9 +66,11 @@ html, body {
   -webkit-backdrop-filter: blur(14px) saturate(1.1);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   overflow: hidden;
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease;
+  will-change: transform, opacity;
+  /* opacity 由 JS 每帧缓动（雨幕压上来时降到 0.85），所以不写进 transition */
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
-#panel.hidden { transform: translateX(-116%) ; opacity: 0; pointer-events: none; }
+#panel.hidden { transform: translateX(-116%) ; opacity: 0 !important; pointer-events: none; }
 
 .panel-head {
   display: flex; align-items: center; justify-content: space-between;
